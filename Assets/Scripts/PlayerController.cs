@@ -8,10 +8,33 @@ public class PlayerController : MonoBehaviour
     
     public float moveSpeed;
     public Animator myAnim;
+    public static PlayerController instance;
+    public string areaTransitionName;
+    private Vector3 bottomLeftLimit;
+    private Vector3 topRightLimit;
+    //set a playersize for the screen hard coded vector 3 for now
+    private Vector3 playerSizeMultiPositive = new Vector3(.5f,1f,0f);
+    private Vector3 playerSizeMultinegative = new Vector3(-.5f, -1f, 0f);
+
+
     // Start is called before the first frame update
     void Start()
     {
+        if (instance == null)
+        {
+            instance = this;
+
+        }
+        else
+        {
+            if(instance != this)
+            {
+                Destroy(gameObject);
+            }
+            
+        }
         
+        DontDestroyOnLoad(gameObject);
     }
 
     // Update is called once per frame
@@ -28,6 +51,14 @@ public class PlayerController : MonoBehaviour
             myAnim.SetFloat("lastMoveY", Input.GetAxisRaw("Vertical"));
         }
 
-        
+        transform.position = new Vector3(Mathf.Clamp(transform.position.x, bottomLeftLimit.x, topRightLimit.x), Mathf.Clamp(transform.position.y, bottomLeftLimit.y, topRightLimit.y), transform.position.z);
+
+
+    }
+
+    public void SetBounds(Vector3 botLeft,Vector3 topRight)
+    {
+        bottomLeftLimit = botLeft + playerSizeMultiPositive;
+        topRightLimit = topRight + playerSizeMultinegative;
     }
 }
